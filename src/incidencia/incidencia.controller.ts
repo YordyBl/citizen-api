@@ -23,8 +23,14 @@ export class IncidenciaController {
 
   @Get(':term')
   findOne(@Param('term') term: string) {
-    return this.incidenciaService.findOne(term);
+    return this.incidenciaService.findOnePlain(term);
   }
+
+  @Get('title/:term')
+  findMany(@Param('term') term: string, @Query() paginationDto: PaginationDto) {
+    return this.incidenciaService.findByTitle(term, paginationDto);
+  }
+
 
   @Patch(':id')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateIncidenciaDto: UpdateIncidenciaDto) {

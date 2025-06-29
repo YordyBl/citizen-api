@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IncidenciaImage } from "./incidencia-image.entity";
 import { IsOptional } from "class-validator";
 
@@ -35,6 +35,6 @@ export class Incidencia {
     tags:string[];
     //las before or after update van en la entity
 
-    @OneToMany(() => IncidenciaImage, images => images.incidencia, {cascade:true})
+    @OneToMany(() => IncidenciaImage, images => images.incidencia, {cascade:true, eager:true})
     images: IncidenciaImage[];
 }

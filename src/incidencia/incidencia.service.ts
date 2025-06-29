@@ -3,10 +3,10 @@ import { CreateIncidenciaDto } from './dto/create-incidencia.dto';
 import { UpdateIncidenciaDto } from './dto/update-incidencia.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Incidencia } from './entities/incidencia.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import {validate as isUUID} from 'uuid';
 import { off } from 'process';
+import { Incidencia, IncidenciaImage } from './entities';
 
 @Injectable()
 export class IncidenciaService {
@@ -17,19 +17,24 @@ export class IncidenciaService {
 
   constructor(
     @InjectRepository(Incidencia)
-    private readonly IncidenciaRepository: Repository<Incidencia>
+    private readonly IncidenciaRepository: Repository<Incidencia>,
+    @InjectRepository(IncidenciaImage)
+    private readonly incidenciaImageRepository: Repository<IncidenciaImage>
   ) { }
 
   async create(createIncidenciaDto: CreateIncidenciaDto) {
 
     try {
+      
+      const {images = [], ...incidenciaDetails} = createIncidenciaDto
+
       const incidencia = this.IncidenciaRepository.create(
-        {...createIncidenciaDto, images:[]}
+        {...incidenciaDetails, images:images.map(image=>this.incidenciaImageRepository.create({url:image}))}
       )
 
       await this.IncidenciaRepository.save(incidencia);
 
-      return incidencia;
+      return {...incidencia, images};
 
     } catch (error) {
       this.handleDBExceptions(error);
@@ -46,9 +51,14 @@ export class IncidenciaService {
     const incidencias = await this.IncidenciaRepository.find({
         take: limit,
         skip: offset,
+        relations: {
+          images: true
+        }
     });
     
-    return incidencias;
+    return incidencias.map(incidencia =>({
+      ...incidencia, images: incidencia.images.map(img=>img.url)
+    }));
    
   }
 
@@ -65,10 +75,12 @@ export class IncidenciaService {
     if(isUUID(term)){
       incidencia = await this.IncidenciaRepository.findOneBy({id:term});
     }else {
-        const queryBuilder = this.IncidenciaRepository.createQueryBuilder();
+        const queryBuilder = this.IncidenciaRepository.createQueryBuilder("incidencia");
         incidencia = await queryBuilder.where('title =:title', {
           title: term
-        }).getOne();
+        })
+        .leftJoinAndSelect("incidencia.images", "images")
+        .getOne();
     }
 
       if(!incidencia) 
@@ -76,6 +88,32 @@ export class IncidenciaService {
       return incidencia
     
   }
+
+  async findOnePlain(term:string){
+    const {images=[], ...rest} = await this.findOne(term);
+    return {...rest, images: images.map(image=> image.url)}
+  }
+
+  async findByTitle(title: string, paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+
+    if (!title) {
+      throw new BadRequestException('The search term must not be empty or undefined.');
+    }
+
+    const incidencias = await this.IncidenciaRepository.createQueryBuilder('incidencia')
+      .leftJoinAndSelect('incidencia.images', 'images')
+      .where('incidencia.title LIKE :title', { title: `%${title}%` })
+      .skip(offset)
+      .take(limit)
+      .getMany();
+
+    return incidencias.map(incidencia => ({
+      ...incidencia,
+      images: incidencia.images.map(img => img.url),
+    }));
+  }
+
 
 
  async update(id: string, updateIncidenciaDto: UpdateIncidenciaDto) {
