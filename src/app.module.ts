@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IncidenciaModule } from './incidencia/incidencia.module';
 import { CommonModule } from './common/common.module';
+import { FilesModule } from './files/files.module';
 
 
 @Module({
@@ -20,6 +21,7 @@ import { CommonModule } from './common/common.module';
     }),
     IncidenciaModule,
     CommonModule,
+    FilesModule,
   ],
   controllers: [],
   providers: [],
