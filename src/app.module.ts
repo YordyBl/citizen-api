@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { IncidenciaModule } from './incidencia/incidencia.module';
 import { CommonModule } from './common/common.module';
 import { FilesModule } from './files/files.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -22,6 +23,7 @@ import { FilesModule } from './files/files.module';
     IncidenciaModule,
     CommonModule,
     FilesModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
