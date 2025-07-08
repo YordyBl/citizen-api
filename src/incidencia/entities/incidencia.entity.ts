@@ -1,6 +1,7 @@
-import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IncidenciaImage } from "./incidencia-image.entity";
 import { IsOptional } from "class-validator";
+import { User } from "src/auth/entities/user.entity";
 
 @Entity()
 export class Incidencia {
@@ -37,4 +38,12 @@ export class Incidencia {
 
     @OneToMany(() => IncidenciaImage, images => images.incidencia, {cascade:true, eager:true})
     images: IncidenciaImage[];
+
+
+    @ManyToOne(
+        ()=> User,
+        (user) => user.incidencia,
+        {eager:true}
+    )
+    user: User;
 }

@@ -7,6 +7,7 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import {validate as isUUID} from 'uuid';
 import { off } from 'process';
 import { Incidencia, IncidenciaImage } from './entities';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class IncidenciaService {
@@ -22,14 +23,18 @@ export class IncidenciaService {
     private readonly incidenciaImageRepository: Repository<IncidenciaImage>
   ) { }
 
-  async create(createIncidenciaDto: CreateIncidenciaDto) {
+  async create(createIncidenciaDto: CreateIncidenciaDto, user: User) {
 
     try {
       
       const {images = [], ...incidenciaDetails} = createIncidenciaDto
 
       const incidencia = this.IncidenciaRepository.create(
-        {...incidenciaDetails, images:images.map(image=>this.incidenciaImageRepository.create({url:image}))}
+        {...incidenciaDetails, 
+          images:images.map(image=>this.incidenciaImageRepository.create({url:image})),
+          user,
+        }
+
       )
 
       await this.IncidenciaRepository.save(incidencia);
@@ -116,7 +121,7 @@ export class IncidenciaService {
 
 
 
- async update(id: string, updateIncidenciaDto: UpdateIncidenciaDto) {
+ async update(id: string, updateIncidenciaDto: UpdateIncidenciaDto, user: User) {
 
     const incidencia = await this.IncidenciaRepository.preload({
       id:  id,
@@ -126,6 +131,7 @@ export class IncidenciaService {
 
     if (!incidencia) throw new NotFoundException(`Incidencia con id: ${id} no existe`);
     try {
+      incidencia.user = user;
       await this.IncidenciaRepository.save(incidencia);
       return incidencia;
     } catch (error) {

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Incidencia } from "src/incidencia/entities";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('users')
 export class User {
@@ -32,4 +33,21 @@ export class User {
     })
     roles:string[];
 
+    @BeforeInsert()
+    checkFieldsBeforeInsert(){
+        this.email = this.email.toLocaleLowerCase().trim();
+    }
+
+    @BeforeUpdate()
+    checkFieldsBeforeUpdate(){
+        this.checkFieldsBeforeUpdate();
+    }
+
+    @OneToMany( 
+        ()=>Incidencia, (incidencia) => incidencia.user
+    )
+    incidencia: Incidencia
+
+        // @OneToMany(() => IncidenciaImage, images => images.incidencia, {cascade:true, eager:true})
+        // images: IncidenciaImage[];
 }

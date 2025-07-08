@@ -3,6 +3,9 @@ import { IncidenciaService } from './incidencia.service';
 import { CreateIncidenciaDto } from './dto/create-incidencia.dto';
 import { UpdateIncidenciaDto } from './dto/update-incidencia.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { Auth, GetUser } from 'src/auth/decorators';
+import { ValidRoles } from 'src/auth/interfaces';
+import { User } from 'src/auth/entities/user.entity';
 
 @Controller('incidencia')
 export class IncidenciaController {
@@ -12,11 +15,15 @@ export class IncidenciaController {
   constructor(private readonly incidenciaService: IncidenciaService) {}
 
   @Post()
-  create(@Body() createIncidenciaDto: CreateIncidenciaDto) {
-    return this.incidenciaService.create(createIncidenciaDto);
+  @Auth()
+  create(@Body() createIncidenciaDto: CreateIncidenciaDto, @GetUser() user: User, ) {
+    return this.incidenciaService.create(createIncidenciaDto, user);
   }
 
+
   @Get()
+  @Auth(ValidRoles.admin
+  )
   findAll(@Query() paginationDto: PaginationDto) {
     return this.incidenciaService.findAll(paginationDto);
   }
@@ -33,8 +40,8 @@ export class IncidenciaController {
 
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateIncidenciaDto: UpdateIncidenciaDto) {
-    return this.incidenciaService.update(id, updateIncidenciaDto);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateIncidenciaDto: UpdateIncidenciaDto, @GetUser() user: User) {
+    return this.incidenciaService.update(id, updateIncidenciaDto, user);
   }
 
   @Delete(':id')
