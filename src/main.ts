@@ -3,10 +3,10 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {cors:true});
   const logger = new Logger('Bootstrap');
   app.setGlobalPrefix('api');
-  
+  app.enableCors();
   app.useGlobalPipes(
       new ValidationPipe({
       whitelist: true,

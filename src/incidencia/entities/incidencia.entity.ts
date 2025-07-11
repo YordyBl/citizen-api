@@ -1,6 +1,5 @@
 import { Column, Entity, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IncidenciaImage } from "./incidencia-image.entity";
-import { IsOptional } from "class-validator";
 import { User } from "src/auth/entities/user.entity";
 
 @Entity()
@@ -20,14 +19,14 @@ export class Incidencia {
     @Column('timestamp')
     reported_date:string;
 
-    @Column('text', {
-        array:true
-    })
-    sizes:string[];
+    @Column('text', {nullable:true})
+    priority:string;
 
-    @Column('text')
-    gender:string;
+    @Column('text', {nullable:true})
+    lat:string;
 
+    @Column('text', {nullable:true})
+    long:string;
 
     @Column('text', {
         array:true,

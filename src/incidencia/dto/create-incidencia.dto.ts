@@ -11,19 +11,25 @@ export class CreateIncidenciaDto {
 		description:string;
 
         @IsString()
-		reported_date:string;
+        @IsOptional()
+        generated_details:string;
 
-        @IsString({each:true})
-        @IsArray()
-		sizes:string[];
+        @IsString()
+		reported_date:string;
 
         @IsString({each:true})
         @IsArray()
         @IsOptional()
 		tags:string[];
 
-        @IsIn(['men', 'women', 'other'])
-        gender:string;
+        @IsString()
+        lat:string;
+
+        @IsString()
+        long:string;
+
+        @IsIn(['BAJA', 'MODERADA', 'ALTA'])
+        priority:string;
 
         @IsString({each:true})
         @IsArray()

@@ -22,29 +22,32 @@ export class IncidenciaController {
 
 
   @Get()
-  @Auth(ValidRoles.admin
-  )
+  @Auth(ValidRoles.admin)
   findAll(@Query() paginationDto: PaginationDto) {
     return this.incidenciaService.findAll(paginationDto);
   }
 
   @Get(':term')
+  @Auth()
   findOne(@Param('term') term: string) {
     return this.incidenciaService.findOnePlain(term);
   }
 
   @Get('title/:term')
+  @Auth()
   findMany(@Param('term') term: string, @Query() paginationDto: PaginationDto) {
     return this.incidenciaService.findByTitle(term, paginationDto);
   }
 
 
   @Patch(':id')
+  @Auth(ValidRoles.admin)
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateIncidenciaDto: UpdateIncidenciaDto, @GetUser() user: User) {
     return this.incidenciaService.update(id, updateIncidenciaDto, user);
   }
 
   @Delete(':id')
+  @Auth(ValidRoles.admin)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.incidenciaService.remove(id);
   }
