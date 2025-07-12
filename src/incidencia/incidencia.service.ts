@@ -44,9 +44,6 @@ export class IncidenciaService {
     } catch (error) {
       this.handleDBExceptions(error);
     }
-
-
-    return 'This action adds a new incidencia';
   }
 
   async findAll(paginationDto: PaginationDto) {

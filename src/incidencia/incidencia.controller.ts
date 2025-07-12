@@ -22,7 +22,7 @@ export class IncidenciaController {
 
 
   @Get()
-  @Auth(ValidRoles.admin)
+  @Auth()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.incidenciaService.findAll(paginationDto);
   }

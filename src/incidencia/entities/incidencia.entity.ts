@@ -19,8 +19,11 @@ export class Incidencia {
     @Column('timestamp')
     reported_date:string;
 
-    @Column('text', {nullable:true})
-    priority:string;
+    @Column('int', {nullable:true})
+    priority:number;
+
+    @Column('text')
+    generated_details:string;    
 
     @Column('text', {nullable:true})
     lat:string;

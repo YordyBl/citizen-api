@@ -1,4 +1,4 @@
-import { IsArray, IsIn, IsOptional, IsString, MinLength } from "class-validator";
+import { IsArray, IsIn, IsNumber, IsOptional, IsString, MinLength } from "class-validator";
 
 export class CreateIncidenciaDto {
 
@@ -28,8 +28,8 @@ export class CreateIncidenciaDto {
         @IsString()
         long:string;
 
-        @IsIn(['BAJA', 'MODERADA', 'ALTA'])
-        priority:string;
+        @IsNumber()
+        priority:number;
 
         @IsString({each:true})
         @IsArray()

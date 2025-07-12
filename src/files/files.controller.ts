@@ -6,6 +6,7 @@ import { fileNamer } from './helpers/fileNamer.helper';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { Auth } from 'src/auth/decorators';
 
 
 @Controller('files')
@@ -15,6 +16,7 @@ export class FilesController {
   ) { }
 
   @Post('incidencia/images')
+  @Auth()
   @UseInterceptors(FileInterceptor('file', {
     fileFilter: fileFilter,
     storage: diskStorage({
@@ -22,13 +24,16 @@ export class FilesController {
       filename: fileNamer
     })
   }))
-  uploadIncidenciaImage(@UploadedFile() file: Express.Multer.File) {
+  async uploadIncidenciaImage(@UploadedFile() file: Express.Multer.File) {
 
     if (!file) {
       throw new BadRequestException('File is empty')
     }
+      const resultadoClasificacion = await this.filesService.clasificarImagenConFastAPI(file.filename);
       const secureUrl = `${this.configService.get('HOST_API')}/files/incidencia/${file.filename}`
-    return secureUrl;
+    return {imageUrl: secureUrl,
+            modelResult: resultadoClasificacion
+    };
   }
 
   @Get('/incidencia/:imageName')
