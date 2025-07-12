@@ -27,7 +27,7 @@ export class FilesService {
     form.append('file', stream);
 
     const response$ = this.httpService.post(
-      'http://localhost:8000/clasificar/',
+      'https://citizen-clasifier-production.up.railway.app/clasificar/',
       form,
       { headers: form.getHeaders() }
     );
