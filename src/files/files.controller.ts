@@ -49,7 +49,6 @@ export class FilesController {
       error: 'Bad Request'
     }
   })
-  @Auth()
   @UseInterceptors(FileInterceptor('file', {
     fileFilter: fileFilter,
     storage: diskStorage({

@@ -117,7 +117,6 @@ export class IncidenciaController {
       error: 'Forbidden'
     }
   })
-  @Auth()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.incidenciaService.findAll(paginationDto);
   }
